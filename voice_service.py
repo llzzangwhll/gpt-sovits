@@ -45,6 +45,8 @@ from config import (
     SoVITS_weight_root,
     SoVITS_weight_version2root,
     get_weights_names,
+    name2sovits_path,
+    name2gpt_path,
 )
 
 # ========== 설정 ==========
@@ -434,12 +436,22 @@ def run_gpt_train(version, exp_name, batch_size, total_epoch,
 tts_pipeline = None
 
 
+def resolve_model_path(name, name2path_dict):
+    """표시 이름을 실제 파일 경로로 변환"""
+    if name in name2path_dict:
+        return name2path_dict[name]
+    return name
+
+
 def load_tts_model(sovits_path, gpt_path):
     """TTS 모델 로드"""
     global tts_pipeline
 
     if not sovits_path or not gpt_path:
         return "SoVITS와 GPT 모델 경로를 모두 지정하세요"
+
+    sovits_path = resolve_model_path(sovits_path, name2sovits_path)
+    gpt_path = resolve_model_path(gpt_path, name2gpt_path)
 
     try:
         from GPT_SoVITS.TTS_infer_pack.TTS import TTS, TTS_Config
